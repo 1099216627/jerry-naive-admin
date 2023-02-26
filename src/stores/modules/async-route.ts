@@ -87,6 +87,7 @@ export const useAsyncRouteStore = defineStore({
       this.keepAliveComponents = compNames;
     },
     async generateRoutes(data) {
+      if (!data) return;
       let accessedRouters;
       const permissionsList = data.permissions || [];
       const menuList = data.menus || [];

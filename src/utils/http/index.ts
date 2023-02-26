@@ -60,7 +60,7 @@ const transform: AxiosTransform = {
         $message.success(message || "操作成功");
       } else if (!hasSuccess && isShowErrorMessage) {
         // 是否显示自定义信息提示
-        $message.error(message || "操作失败！");
+        $message.error(message || "服务器异常，请稍后再试");
       } else if (!hasSuccess && options.errorMessageMode === "modal") {
         // errorMessageMode=‘custom-modal’的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
         $dialog.info({

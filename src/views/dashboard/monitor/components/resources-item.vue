@@ -22,11 +22,11 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import { useMessage } from "naive-ui";
-import { IRessource } from "@/views/system/resources/types/resource-type";
+import { IResource } from "@/views/system/resources/types/resource-type";
 const message = useMessage();
 defineProps({
   item: {
-    type: Object as PropType<IRessource>,
+    type: Object as PropType<IResource>,
     required: true,
   },
 });

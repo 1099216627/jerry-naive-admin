@@ -82,7 +82,11 @@
     </n-card>
   </div>
 </template>
-
+<script lang='ts'>
+ export default {
+    name:"user"
+ }
+</script>
 <script setup lang="ts">
 import { onMounted, reactive, ref, unref, computed } from "vue";
 import { batchDeleteUserApi, createUserApi, deleteUserApi, disableUserApi, enableUserApi, getAllUsersApi, getAllUsersParams, getUserDetailApi, getUserListByIDsApi, recoverUserApi, updateUserInfoApi } from "@/api/user";
@@ -106,6 +110,7 @@ import { isVoid } from "@/utils/is";
 import { removeEmptyValue } from "@/utils/url-utils";
 import { conditionPanelConfig } from './config'
 import { useXlsx, XlsxType } from "@/hooks/use-xlsx";
+
 interface IUserModel {
   username: string;
   password: string;
@@ -159,7 +164,7 @@ const userModel = reactive<IUserModel>({
   gender: GenderEnum.MALE,
   avatar: "",
 });
-const fileList = reactive([]);
+const fileList = reactive<string[]>([]);
 const selectRowKeys = ref<number[]>([]);
 const pagination = computed(() => {
   return {
@@ -262,6 +267,7 @@ const openModal = async (edit: boolean, id?: number) => {
       userModel.roleId = res.role.id
       userModel.gender = res.profile.gender
       userModel.avatar = res.profile.avatar
+      fileList.push(res.profile.avatar)
     }
   }
 };

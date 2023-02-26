@@ -1,5 +1,5 @@
 import { ICommon } from '@/enums/common';
-export interface IRessource extends ICommon {
+export interface IResource extends ICommon {
   name: string;
   url: string;
   description: string;

@@ -72,6 +72,10 @@ export function createRouterGuards(router: Router) {
 
     await userStore.getUserInfo();
     const { data } = await getUserMenusApi();
+    if (!data) {
+      next(PageEnum.BASE_LOGIN);
+      return;
+    }
 
     const routes = await asyncRouteStore.generateRoutes(data);
     // 动态添加可访问路由表
@@ -109,11 +113,11 @@ export function createRouterGuards(router: Router) {
     if (
       currentComName &&
       !keepAliveComponents.includes(currentComName) &&
-      to.meta?.keepAlive
+      to.meta?.cache
     ) {
       // 需要缓存的组件
       keepAliveComponents.push(currentComName);
-    } else if (!to.meta?.keepAlive || to.name == "Redirect") {
+    } else if (!to.meta?.cache || to.name == "Redirect") {
       // 不需要缓存的组件
       const index = asyncRouteStore.keepAliveComponents.findIndex(
         (name) => name == currentComName

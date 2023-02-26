@@ -36,7 +36,11 @@
     </n-grid-item>
   </n-grid>
 </template>
-
+<script lang='ts'>
+ export default {
+    name:"monitor"
+ }
+</script>
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import {  quicks ,dynamics} from "./config";
@@ -44,7 +48,7 @@ import ResourcesItem from "@/views/dashboard/monitor/components/resources-item.v
 import DynamicItem from "@/views/dashboard/monitor/components/dynamic-item.vue";
 import { getResourceListApi } from "@/api/resource";
 import { CSSProperties, onMounted, reactive } from "vue";
-import { IRessource } from "@/views/system/resources/types/resource-type";
+import { IResource } from "@/views/system/resources/types/resource-type";
 import { ResultEnum } from "@/enums/httpEnum";
 /**
  * 代码提交规范
@@ -62,7 +66,7 @@ const getResourceList = async () => {
     resourceList.splice(0, resourceList.length, ...data.list);
   }
 };
-const resourceList  = reactive<IRessource[]>([])
+const resourceList  = reactive<IResource[]>([])
 const router = useRouter();
 const cardHeaderStyle:CSSProperties = {
   fontSize: "16px",

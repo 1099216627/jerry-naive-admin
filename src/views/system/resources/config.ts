@@ -1,4 +1,4 @@
-import { IRessource } from './types/resource-type';
+import { IResource } from './types/resource-type';
 import { validateResourceName } from "@/utils/validate"
 import { DataTableColumns, FormRules, NImage, NButton, useMessage } from "naive-ui"
 import { h } from 'vue';
@@ -20,7 +20,7 @@ export const createFormRules = (): FormRules => {
     ],
   }
 }
-export const createResourceColumns = (onOk,onCancel): DataTableColumns<IRessource> => {
+export const createResourceColumns = (onOk,onCancel): DataTableColumns<IResource> => {
   const message = useMessage()
   return [
     {

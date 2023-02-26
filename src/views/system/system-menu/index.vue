@@ -3,7 +3,11 @@
     <n-data-table :data="menusList" :columns="createMenuColumn()"></n-data-table>
   </n-card>
 </template>
-
+<script lang='ts'>
+ export default {
+    name:"menu"
+ }
+</script>
 <script setup lang="ts">
 import { getMenusApi } from '@/api/menu';
 import { onMounted, reactive } from 'vue';

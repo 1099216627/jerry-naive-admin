@@ -40,7 +40,11 @@
     </n-modal>
   </div>
 </template>
-
+<script lang='ts'>
+ export default {
+    name:"resources"
+ }
+</script>
 <script setup lang="ts">
 import componentSetting from '@/settings/component-setting';
 import { FormInst,useDialog } from 'naive-ui';
@@ -49,7 +53,7 @@ import BasicUpload from '@/components/upload-image/index.vue';
 import { createFormRules, createResourceColumns } from './config';
 import { createResourceApi, deleteResourceApi, getResourceListApi, updateResourceApi } from '@/api/resource';
 import { ResultEnum } from '@/enums/httpEnum';
-import { IRessource } from './types/resource-type';
+import { IResource } from './types/resource-type';
 import { CloseOutlined } from '@vicons/antd'
 const showModal = ref(false);
 const dialog = useDialog();
@@ -57,7 +61,7 @@ const title = ref('新建资源');
 const formRef = ref<FormInst | null>(null);
 const fileList = reactive<string[]>([]);
 const resourceId = ref(0);
-const resourceList = reactive<IRessource[]>([]);
+const resourceList = reactive<IResource[]>([]);
 const resourceModel = reactive({
   name: "",
   url: "",
@@ -102,7 +106,7 @@ const openModal = (id?: number) => {
   })
 }
 
-const setResourceInfo = (item: IRessource) => {
+const setResourceInfo = (item: IResource) => {
   resourceModel.name = item.name;
   resourceModel.url = item.url;
   resourceModel.description = item.description;

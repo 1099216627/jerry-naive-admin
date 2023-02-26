@@ -9,7 +9,11 @@
       @update-page="handlePageChange" @update-page-size="handlePageSizeChange"></n-data-table>
   </n-card>
 </template>
-
+<script lang='ts'>
+ export default {
+    name:"log"
+ }
+</script>
 <script setup lang="ts">
 import { deleteAllLogApi, deleteLogApi, getLogListApi } from '@/api/logger';
 import { ResultEnum } from '@/enums/httpEnum';

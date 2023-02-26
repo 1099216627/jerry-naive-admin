@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { store } from "@/stores";
-import { getUserInfoApi, signInApi } from "@/api/user";
+import { getUserInfoApi, signInApi, signOutApi } from "@/api/user";
 import { ResultEnum } from "@/enums/httpEnum";
 import { storage } from "@/utils/storage";
 import { ACCESS_TOKEN, IS_LOCKSCREEN } from "@/stores/mutation-types";
@@ -28,7 +28,7 @@ export const useUserStore = defineStore({
           const ex = 7 * 24 * 60 * 60;
           storage.set(ACCESS_TOKEN, data.access_token, ex);
           storage.set(IS_LOCKSCREEN, false);
-          this.setToken(data.token);
+          this.setToken(data.access_token);
         }
         return Promise.resolve(response);
       } catch (e) {
@@ -41,6 +41,18 @@ export const useUserStore = defineStore({
         this.setUserInfo(data);
       }
       return data;
+    },
+    async signOut () {
+      const {  code } = await signOutApi();
+      if (code === ResultEnum.SUCCESS) {
+        this.resetState();
+        storage.remove(ACCESS_TOKEN);
+        storage.remove(IS_LOCKSCREEN);
+      }
+    },
+    resetState() {
+      this.token = "";
+      this.info = {};
     },
     setToken(token: string) {
       this.token = token;

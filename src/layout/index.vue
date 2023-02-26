@@ -71,7 +71,11 @@
     </n-layout>
   </n-layout>
 </template>
-
+<script lang='ts'>
+ export default {
+    name:"Layout"
+ }
+</script>
 <script setup lang="ts">
 import { computed, onMounted, ref, unref } from "vue";
 import { useRoute } from "vue-router";

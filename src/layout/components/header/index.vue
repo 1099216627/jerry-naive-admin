@@ -119,10 +119,9 @@
 <script setup lang="ts">
 import AsideMenu from "@/layout/components/menu/index.vue";
 import { useRouter, useRoute } from "vue-router";
-import { NDialogProvider, useDialog, useMessage } from "naive-ui";
+import {  useDialog, useMessage } from "naive-ui";
 import BreadCrumbs from "@/components/bread-crumbs/index.vue";
 import ProjectSetting from "@/layout/components/header/project-setting.vue";
-import { TABS_ROUTES } from "@/stores/mutation-types";
 import {
   SettingOutlined,
   MenuFoldOutlined,
@@ -136,9 +135,8 @@ import { useUserStore } from "@/stores/modules/user";
 import { useLockscreenStore } from "@/stores/modules/lockscreen";
 import { useSettingHook } from "@/hooks/settings/use-setting-hook";
 import { websiteConfig } from "@/config/website.config";
-import { computed, reactive, ref, unref, watch, watchEffect } from "vue";
+import { computed, reactive, ref, unref } from "vue";
 import FullScreen from "@/layout/components/header/full-screen.vue";
-import { storeToRefs } from "pinia";
 const props = defineProps({
   collapsed: {
     type: Boolean,
@@ -172,14 +170,14 @@ const getInverted = computed(() => {
 const mixMenu = computed(() => {
   return unref(getMenuSetting).mixMenu;
 });
-const getChangeStyle = computed(() => {
-  const { collapsed } = props;
-  const { minMenuWidth, menuWidth }: any = unref(getMenuSetting);
-  return {
-    left: collapsed ? `${minMenuWidth}px` : `${menuWidth}px`,
-    width: `calc(100% - ${collapsed ? `${minMenuWidth}px` : `${menuWidth}px`})`,
-  };
-});
+// const getChangeStyle = computed(() => {
+//   const { collapsed } = props;
+//   const { minMenuWidth, menuWidth }: any = unref(getMenuSetting);
+//   return {
+//     left: collapsed ? `${minMenuWidth}px` : `${menuWidth}px`,
+//     width: `calc(100% - ${collapsed ? `${minMenuWidth}px` : `${menuWidth}px`})`,
+//   };
+// });
 const getMenuLocation = computed(() => {
   return "header";
 });
@@ -190,7 +188,19 @@ const reloadPage = () => {
     path: "/redirect" + unref(route).fullPath,
   });
 };
-const doLogout = () => {};
+const doLogout = () => {
+  dialog.warning({
+    title: "提示",
+    content: "确定退出登录吗？",
+    positiveText: "确定",
+    negativeText: "取消",
+    onPositiveClick: () => {
+     userStore.signOut();
+      message.success("退出登录成功");
+      router.push({ path: "/login" });
+    },
+  });
+};
 const goGithub = () => {
   window.open("https://github.com/jekip/naive-ui-admin");
 };

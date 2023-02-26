@@ -35,7 +35,11 @@
     </n-grid>
   </div>
 </template>
-
+<script lang='ts'>
+ export default {
+    name:"console"
+ }
+</script>
 <script setup lang="ts">
 import StatisticalItem from "@/views/dashboard/console/components/statistical-item.vue";
 import BaseEcharts from "@/components/base-echarts/index.vue";

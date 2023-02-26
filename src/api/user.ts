@@ -38,6 +38,12 @@ export function signUpApi(data) {
     data,
   });
 }
+export function signOutApi() {
+  return http.request<BasicResponseModel>({
+    url: "/api/v1/auth/signout",
+    method: "post",
+  });
+}
 //获取用户信息
 export function getUserInfoApi() {
   return http.request<BasicResponseModel>({
@@ -51,6 +57,17 @@ export function updateUserInfoApi(id: number, data) {
   return http.request<BasicResponseModel>(
     {
       url: `/api/v1/profile/${id}`,
+      method: "put",
+      data,
+    },
+    { isShowSuccessMessage: true }
+  );
+}
+//修改个人资料
+export function updateSelfInfoApi(data) {
+  return http.request<BasicResponseModel>(
+    {
+      url: "/api/v1/profile",
       method: "put",
       data,
     },

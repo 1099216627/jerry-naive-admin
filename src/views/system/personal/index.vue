@@ -50,17 +50,20 @@
     </n-modal>
   </n-card>
 </template>
-
+<script lang='ts'>
+ export default {
+    name:"personal"
+ }
+</script>
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { useUserStore } from "@/stores/modules/user";
 import { FormRules } from "naive-ui";
-import { updateUserInfoApi } from "@/api/user";
+import { updateSelfInfoApi } from "@/api/user";
 import { GenderEnum } from "@/enums/common";
 import { validateGender, validateNickname } from "@/utils/validate";
 import BasicUpload from "@/components/upload-image/index.vue";
 const userStore = useUserStore();
-const info = userStore.getInfo;
 
 const formRef = ref(null);
 const fileList = reactive<string[]>([]);
@@ -92,8 +95,7 @@ const genderOptions = [
 ];
 
 const updateUserInfo = async () => {
-  const id = info?.id;
-  const { code, data } = await updateUserInfoApi(id, model);
+  const { code, data } = await updateSelfInfoApi(model);
   if (code === 200) {
     userStore.setUserInfo(data);
   }

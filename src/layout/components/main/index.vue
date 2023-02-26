@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { useAsyncRouteStore } from "@/stores/modules/async-route";
 import { useSettingHook } from "@/hooks/settings/use-setting-hook";
-import { computed, unref } from "vue";
+import { computed, unref,watch } from "vue";
 defineProps({
   notNeedKey: {
     type: Boolean,
@@ -27,8 +27,14 @@ defineProps({
 });
 const { getIsPageAnimate, getPageAnimateType } = useSettingHook();
 const asyncRouteStore = useAsyncRouteStore();
+console.log(asyncRouteStore.keepAliveComponents,'asyncRouteStore.keepAliveComponents');
+
 // 需要缓存的路由组件
 const keepAliveComponents = computed(() => asyncRouteStore.keepAliveComponents);
+
+watch(()=>keepAliveComponents.value,()=>{
+  console.log(keepAliveComponents.value,'keepAliveComponents.value');
+})
 
 const getTransitionName = computed(() => {
   return unref(getIsPageAnimate) ? unref(getPageAnimateType) : "";

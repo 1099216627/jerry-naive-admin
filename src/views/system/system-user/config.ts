@@ -61,7 +61,7 @@ export const createUserColumns = (updateFunction: Function, openDialogFunction: 
     },
     {
       title: "创建时间",
-      key: "createAt",
+      key: "createdAt",
       align: "center",
     },
     {
@@ -140,7 +140,7 @@ export const createUserColumns = (updateFunction: Function, openDialogFunction: 
                 {
                   default: () => "删除",
                 }
-              ),
+              )
             )
           ]
         );
@@ -149,7 +149,7 @@ export const createUserColumns = (updateFunction: Function, openDialogFunction: 
   ];
 };
 
-export const rules = {
+export const rules:any = {
   username: [
     {
       required: true,

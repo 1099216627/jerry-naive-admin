@@ -68,7 +68,11 @@
     </n-modal>
   </div>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'role',
+}
+</script>
 <script setup lang="ts">
 import { findRoleListApi, createRoleApi, CreateRoleModel, distributionRoleApi, updateRoleApi, deleteRoleApi } from '@/api/role';
 import { ResultEnum } from '@/enums/httpEnum';
@@ -166,7 +170,7 @@ const updateRole = async () => {
 const deleteRole = (id: number) => {
   dialog.warning({
     title: '提示',
-    content: '确定删除该角色吗？',
+    content: '确定删除该角色吗？删除后角色下用户将全部转移到用户组，并且角色下的菜单权限将全部失效！',
     positiveText: '确定',
     negativeText: '取消',
     maskClosable: false,
@@ -292,7 +296,7 @@ const handlePageChange = (page: number) => {
 }
 
 const handlePageSizeChange = (size: number) => {
-  params.pageSize = size;
+  params.limit = size;
   getRoleList();
 }
 
