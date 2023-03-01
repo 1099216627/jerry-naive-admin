@@ -44,6 +44,16 @@ export function signOutApi() {
     method: "post",
   });
 }
+//修改密码
+export function updatePasswordApi(data) {
+  return http.request<BasicResponseModel>({
+    url: "/api/v1/auth/password",
+    method: "put",
+    data,
+  },
+    { isShowSuccessMessage: true }
+  );
+}
 //获取用户信息
 export function getUserInfoApi() {
   return http.request<BasicResponseModel>({
@@ -140,7 +150,7 @@ export function recoverUserApi(id: number) {
   );
 }
 //批量删除用户
-export function batchDeleteUserApi(data:{ids:number[]}) {
+export function batchDeleteUserApi(data: { ids: number[] }) {
   return http.request<BasicResponseModel>(
     {
       url: `/api/v1/user/batch`,

@@ -1,15 +1,34 @@
 import { defineStore } from "pinia";
 import { store } from "@/stores";
-import { getUserInfoApi, signInApi, signOutApi } from "@/api/user";
+import { getUserInfoApi, signInApi, signOutApi, signUpApi, updatePasswordApi } from "@/api/user";
 import { ResultEnum } from "@/enums/httpEnum";
 import { storage } from "@/utils/storage";
 import { ACCESS_TOKEN, IS_LOCKSCREEN } from "@/stores/mutation-types";
+import { IUserProfile } from "@/views/system/system-user/types/user-type";
+interface UserState {
+  token: string;
+  info: IUserProfile | {};
+  params: {
+    username: string;
+    password: string;
+    rememberMe: boolean;
+  };
+}
 
 export const useUserStore = defineStore({
   id: "app-user",
-  state: () => ({
+  persist: {
+    storage:window.localStorage,
+    paths:['params']    
+  },
+  state: ():UserState => ({
     token: "",
     info: {},
+    params: {
+      username: "",
+      password: "",
+      rememberMe: false,
+    },
   }),
   getters: {
     getToken(): string {
@@ -20,7 +39,7 @@ export const useUserStore = defineStore({
     },
   },
   actions: {
-    async login(userInfo) {
+    async login(userInfo,rememberMe) {
       try {
         const response = await signInApi(userInfo);
         const { data, code } = response;
@@ -29,7 +48,32 @@ export const useUserStore = defineStore({
           storage.set(ACCESS_TOKEN, data.access_token, ex);
           storage.set(IS_LOCKSCREEN, false);
           this.setToken(data.access_token);
+          if(rememberMe){
+            this.params = {...userInfo,rememberMe};
+          }else{
+            this.params = {
+              username: "",
+              password: "",
+              rememberMe: false,
+            };
+          }
         }
+        return Promise.resolve(response);
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    },
+    async register(userInfo) {
+      try {
+        const response = await signUpApi(userInfo);
+        return Promise.resolve(response);
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    },
+    async updatePassword(data) {
+      try {
+        const response = await updatePasswordApi(data);
         return Promise.resolve(response);
       } catch (e) {
         return Promise.reject(e);

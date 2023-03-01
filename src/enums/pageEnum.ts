@@ -11,4 +11,6 @@ export enum PageEnum {
   BASE_HOME_REDIRECT = "/dashboard/console",
   // 错误
   ERROR_PAGE_NAME = "ErrorPage",
+  BASE_REGISTER_NAME = "Register",
+  BASE_REGISTER = "/register",
 }

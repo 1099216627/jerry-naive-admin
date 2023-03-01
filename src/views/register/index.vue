@@ -28,45 +28,23 @@
               </template>
             </n-input>
           </n-form-item>
-          <n-form-item class="default-color">
-            <div class="flex justify-between items-center">
-              <div class="flex-initial">
-                <n-checkbox v-model:checked="
-                  rememberMe
-                ">记住我</n-checkbox>
-              </div>
-              <div class="flex-initial order-last">
-                <!-- <a href="javascript:">忘记密码</a> -->
-              </div>
-            </div>
+          <n-form-item path="passwordRepeat">
+            <n-input v-model:value="formInline.passwordRepeat" type="password" showPasswordOn="click" placeholder="请输入密码">
+              <template #prefix>
+                <n-icon size="18" color="#808695">
+                  <LockClosedOutline />
+                </n-icon>
+              </template>
+            </n-input>
           </n-form-item>
           <n-form-item>
-            <n-button type="primary" @click="handleSubmit" size="large" :loading="loading" block>
-              登录
-            </n-button>
-          </n-form-item>
-          <n-form-item class="default-color">
-            <div class="flex view-account-other">
-              <div class="flex-initial">
-                <span>其它登录方式</span>
+            <div class="w-full">
+              <div @click="toLogin" class=" mb-2 text-blue-500 text-end cursor-pointer">
+                去登录
               </div>
-              <div class="flex-initial mx-2">
-                <a @click="notOpen" href="javascript:">
-                  <n-icon size="24" color="#2d8cf0">
-                    <LogoGithub />
-                  </n-icon>
-                </a>
-              </div>
-              <div class="flex-initial mx-2">
-                <a @click="notOpen" href="javascript:">
-                  <n-icon size="24" color="#2d8cf0">
-                    <LogoFacebook />
-                  </n-icon>
-                </a>
-              </div>
-              <div class="flex-initial" style="margin-left: auto">
-                <a @click="toRegister" href="javascript:">注册账号</a>
-              </div>
+              <n-button class="w-full" type="primary" @click="handleSubmit" size="large" :loading="loading" block>
+                注册
+              </n-button>
             </div>
           </n-form-item>
         </n-form>
@@ -76,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useUserStore } from "@/stores/modules/user";
 import { FormRules, useMessage } from "naive-ui";
@@ -84,8 +62,6 @@ import { ResultEnum } from "@/enums/httpEnum";
 import {
   PersonOutline,
   LockClosedOutline,
-  LogoGithub,
-  LogoFacebook,
 } from "@vicons/ionicons5";
 import { PageEnum } from "@/enums/pageEnum";
 import { websiteConfig } from "@/config/website.config";
@@ -93,36 +69,42 @@ import { validatePassword, validateUsername } from "@/utils/validate";
 interface FormState {
   username: string;
   password: string;
+  passwordRepeat: string;
 }
 
 const formRef = ref();
 const message = useMessage();
 const loading = ref(false);
-const rememberMe = ref(false);
 const LOGIN_NAME = PageEnum.BASE_LOGIN_NAME;
 
 const formInline = reactive({
   username: "",
   password: "",
+  passwordRepeat: "",
 });
 
+const validatorPasswordRepeat = (_, value, callback) => {
+  if (value !== formInline.password) {
+    callback(new Error("两次输入密码不一致!"));
+  } else {
+    callback();
+  }
+};
+
 const rules = {
-  username: { required: true, validator:validateUsername, trigger: "blur" },
-  password: { required: true, validator:validatePassword, trigger: "blur" },
+  username: { required: true, validator: validateUsername, trigger: "blur" },
+  password: { required: true, validator: validatePassword, trigger: "blur" },
+  passwordRepeat: { required: true, validator: validatorPasswordRepeat, trigger: "blur" },
 } as FormRules;
 
 const userStore = useUserStore();
 
 const router = useRouter();
 const route = useRoute();
-//暂未开通
-const notOpen = () => {
-  message.info("暂未开通此登录方式");
-};
 
-const toRegister = () => {  
+const toLogin = () => {
   router.push({
-    path:PageEnum.BASE_REGISTER,
+    name: LOGIN_NAME,
     query: {
       redirect: route.query.redirect,
     },
@@ -133,26 +115,24 @@ const handleSubmit = (e) => {
   e.preventDefault();
   formRef.value.validate(async (errors) => {
     if (!errors) {
-      const { username, password } = formInline;
-      message.loading("登录中...");
+      const { username, password, passwordRepeat } = formInline;
+      message.loading("注册中...");
       loading.value = true;
 
       const params: FormState = {
         username,
         password,
+        passwordRepeat
       };
 
       try {
-        const { code, message: msg } = await userStore.login(params,rememberMe.value);
+        const { code, message: msg } = await userStore.register(params);
         message.destroyAll();
         if (code == ResultEnum.SUCCESS) {
-          const toPath = decodeURIComponent(
-            (route.query?.redirect || "/") as string
-          );
-          message.success("登录成功，即将进入系统");
-          if (route.name === LOGIN_NAME) {
-            await router.replace("/");
-          } else await router.replace(toPath);
+          message.success("注册成功，即将跳转到登录页面");
+          setTimeout(() => {
+            toLogin();
+          }, 1000);
         } else {
           message.info(msg || "登录失败");
         }
@@ -164,14 +144,6 @@ const handleSubmit = (e) => {
     }
   });
 };
-onMounted(()=>{
-  const { params } = useUserStore()
-  if(params){
-    formInline.username = params.username
-    formInline.password = params.password
-    rememberMe.value = params.rememberMe
-  }
-})
 </script>
 
 <style lang="less" scoped>

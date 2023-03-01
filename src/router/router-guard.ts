@@ -13,8 +13,9 @@ import { getUserMenusApi } from "@/api/menu";
 import { useLockscreenStore } from "@/stores/modules/lockscreen";
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
+const REGISTER_PATH = PageEnum.BASE_REGISTER;
 
-const whitePathList = [LOGIN_PATH]; // no redirect whitelist
+const whitePathList = [LOGIN_PATH,REGISTER_PATH]; // no redirect whitelist
 
 export function createRouterGuards(router: Router) {
   const userStore = useUserStoreWithout();
@@ -31,7 +32,7 @@ export function createRouterGuards(router: Router) {
     if (to.path === LOGIN_PATH) {
       lockscreenStore.setLock(false);
     }
-
+    console.log(to.path, "to.path",whitePathList.includes(to.path as PageEnum));
     //存在于白名单中，直接进入
     if (whitePathList.includes(to.path as PageEnum)) {
       next();

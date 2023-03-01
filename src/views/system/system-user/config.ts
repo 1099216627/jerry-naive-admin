@@ -63,6 +63,9 @@ export const createUserColumns = (updateFunction: Function, openDialogFunction: 
       title: "创建时间",
       key: "createdAt",
       align: "center",
+      ellipsis: {
+        tooltip: true
+      }
     },
     {
       title: "性别",

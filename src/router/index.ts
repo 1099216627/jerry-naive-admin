@@ -1,3 +1,4 @@
+import { PageEnum } from '@/enums/pageEnum';
 import { App } from "vue";
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import { RedirectRoute, RootRoute } from "@/router/base";
@@ -20,11 +21,20 @@ function sortRoute(a, b) {
 routeModuleList.sort(sortRoute);
 
 export const LoginRoute: RouteRecordRaw = {
-  path: "/login",
-  name: "Login",
+  path: PageEnum.BASE_LOGIN,
+  name: PageEnum.BASE_LOGIN_NAME,
   component: () => import("@/views/login/index.vue"),
   meta: {
     title: "登录",
+  },
+};
+
+export const RegisterRoute: RouteRecordRaw = {
+  path: PageEnum.BASE_REGISTER,
+  name: PageEnum.BASE_REGISTER_NAME,
+  component: () => import("@/views/register/index.vue"),
+  meta: {
+    title: "注册",
   },
 };
 
@@ -32,7 +42,7 @@ export const LoginRoute: RouteRecordRaw = {
 export const asyncRoutes = [...routeModuleList];
 
 //普通路由 无需验证权限
-export const constantRouter: any[] = [LoginRoute, RedirectRoute, RootRoute];
+export const constantRouter: any[] = [LoginRoute, RedirectRoute, RootRoute,RegisterRoute];
 
 const router = createRouter({
   history: createWebHashHistory(""),

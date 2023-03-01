@@ -114,12 +114,52 @@
   </div>
   <!--项目配置-->
   <project-setting ref="drawerSetting"></project-setting>
+  <!-- 修改密码 -->
+  <n-modal
+    :show="showModal"
+    preset="dialog"
+    title="修改密码"
+    :close-on-esc="false"
+    :mask-closable="false"
+    positive-text="确认"
+    negative-text="取消"
+    @positive-click="submitChangePassword"
+    @negative-click="cancelChangePassword"
+  >
+<template #default>
+  <n-form class='mt-5' ref="changePasswordForm" :model="changePasswordModal" label-placement="left" label-width="80" :rules="rules">
+    <n-form-item label="旧密码" path="oldPassword">
+      <n-input
+        v-model:value="changePasswordModal.oldPassword"
+        placeholder="请输入旧密码"
+        type="password"
+      ></n-input>
+    </n-form-item>
+    <n-form-item label="新密码" path="newPassword">
+      <n-input
+        v-model:value="changePasswordModal.newPassword"
+        placeholder="请输入新密码"
+        type="password"
+        show-password-on="click"
+      ></n-input>
+    </n-form-item>
+    <n-form-item label="确认密码" path="confirmPassword">
+      <n-input
+        v-model:value="changePasswordModal.confirmPassword"
+        placeholder="请再次输入新密码"
+        type="password"
+        show-password-on="click"
+      ></n-input>
+      </n-form-item>
+  </n-form>
+</template>
+  </n-modal>
 </template>
 
 <script setup lang="ts">
 import AsideMenu from "@/layout/components/menu/index.vue";
 import { useRouter, useRoute } from "vue-router";
-import {  useDialog, useMessage } from "naive-ui";
+import { FormInst, FormRules, useDialog, useMessage } from "naive-ui";
 import BreadCrumbs from "@/components/bread-crumbs/index.vue";
 import ProjectSetting from "@/layout/components/header/project-setting.vue";
 import {
@@ -137,6 +177,8 @@ import { useSettingHook } from "@/hooks/settings/use-setting-hook";
 import { websiteConfig } from "@/config/website.config";
 import { computed, reactive, ref, unref } from "vue";
 import FullScreen from "@/layout/components/header/full-screen.vue";
+import { validatePassword } from "@/utils/validate";
+import { ResultEnum } from "@/enums/httpEnum";
 const props = defineProps({
   collapsed: {
     type: Boolean,
@@ -146,6 +188,43 @@ const props = defineProps({
     type: Boolean,
   },
 });
+const validaConfirmPassword = (_: any, value: any, callback: any) => {
+  if (value !== changePasswordModal.newPassword) {
+    callback(new Error("两次输入密码不一致!"));
+  } else {
+    callback();
+  }
+}
+const showModal = ref(false);
+const changePasswordModal = reactive({
+  oldPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+});
+const rules = reactive({
+  oldPassword: [
+    {
+      required: true,
+      validator:validatePassword,
+      trigger: "blur",
+    },
+  ],
+  newPassword: [
+    {
+      required: true,
+      validator:validatePassword,
+      trigger: "blur",
+    },
+  ],
+  confirmPassword: [
+    {
+      required: true,
+      validator: validaConfirmPassword,
+      trigger: "blur",
+    },
+  ],
+}) as FormRules;
+const changePasswordForm = ref<FormInst | null>(null);
 const isCollapsed = ref(props.collapsed);
 const userStore = useUserStore();
 const useLockscreen = useLockscreenStore();
@@ -213,10 +292,40 @@ const avatarOptions = [
     key: 1,
   },
   {
+    label:"修改密码",
+    key:2
+  },
+  {
     label: "退出登录",
-    key: 2,
+    key: 3,
   },
 ];
+//修改密码
+const changePassword = () => {
+  showModal.value = true;
+};
+//取消修改密码
+const cancelChangePassword = () => {
+  showModal.value = false;
+  changePasswordModal.oldPassword = "";
+  changePasswordModal.newPassword = "";
+  changePasswordModal.confirmPassword = "";
+};
+//提交修改密码
+const submitChangePassword = () => {
+  changePasswordForm.value?.validate(async errors => {
+    if (errors) {
+      message.error("请检查输入项");
+    }
+    const {oldPassword,newPassword} = changePasswordModal;
+    const {code} = await userStore.updatePassword({oldPassword,newPassword})
+    if(code === ResultEnum.SUCCESS){
+      cancelChangePassword();
+    }else{      
+      return false;
+    }
+  })
+};
 //头像下拉菜单
 const avatarSelect = (key) => {
   switch (key) {
@@ -224,6 +333,9 @@ const avatarSelect = (key) => {
       router.push({ name: "personal" });
       break;
     case 2:
+      changePassword();
+      break;
+    case 3:
       doLogout();
       break;
   }
